@@ -6,29 +6,50 @@
 /*   By: akinzeli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/27 10:50:07 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/02/27 16:16:36 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/02/28 11:56:35 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int	checkc(va_list args)
+void	ft_putnbr_fd_un(unsigned int n, int fd)
+{
+	long	c;
+
+	if (fd == 0)
+		return ;
+	c = n;
+	if (c < 0)
+	{
+		write(fd, "-", 1);
+		c = c * -1;
+	}
+	if (c >= 10)
+	{
+		ft_putnbr_fd(c / 10, fd);
+		c = c % 10;
+	}
+	if (c < 10)
+	{
+		c = c + '0';
+		write(fd, &c, 1);
+	}
+}
+
+int	checkc(int c)
 {
 	int	count;
-	int	letter;
 
 	count = 1;
-	letter = va_arg(args, int);
-	ft_putchar_fd(letter, 1);
+	ft_putchar_fd(c, 1);
 	return (count);
 }
 
-int	checks(va_list args)
+int	checks(char *str)
 {
 	int	count;
-	char	*str;
 
-	str = va_arg(args, char *);
+	count = 0;
 	if (!str)
 	{
 		write(1, "(null)", 6);
@@ -39,33 +60,36 @@ int	checks(va_list args)
 	return (count);
 }
 
-int	checkdi(va_list args)
+int	checkdi(int n)
 {
 	int	count;
-	int	number;
 
 	count = 0;
-	number = va_arg(args, int);
-	ft_putnbr_fd(number, 1);
-	while (number != 0)
+	ft_putnbr_fd(n, 1);
+	if (n < 0)
+		count = 1;
+	if (n == 0)
+		return (1);
+	while (n != 0)
 	{
-		number = number / 10;
+		n = n / 10;
 		count++;
 	}
 	return (count);
 }
 
-int	checku(va_list args)
+int	checku(unsigned int n)
 {
-	int	count;
-	unsigned int	number;
+	unsigned int	count;
 
 	count = 0;
-	number = va_arg(args, unsigned int);
-	ft_putnbr_fd(number, 1);
-	while (number != 0)
+	if (n == 0)
+		count += write(1, "0", 1);
+	else
+		ft_putnbr_fd_un(n, 1);
+	while (n != 0)
 	{
-		number = number / 10;
+		n = n / 10;
 		count++;
 	}
 	return (count);

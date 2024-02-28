@@ -6,7 +6,7 @@
 /*   By: akinzeli <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 13:32:00 by akinzeli          #+#    #+#             */
-/*   Updated: 2024/02/27 16:05:07 by akinzeli         ###   ########.fr       */
+/*   Updated: 2024/02/28 12:48:59 by akinzeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,29 +18,17 @@ int	checkchar(char c, va_list args)
 
 	count = 0;
 	if (c == 'c')
-	{
-		count = checkc(args);
-	}
+		count += checkc(va_arg(args, int));
 	else if (c == 's')
-	{
-		count = checks(args);
-	}
+		count += checks(va_arg(args, char *));
 	else if (c == 'p')
-	{
-		count = checkp(args);
-	}
+		count += checkp(va_arg(args, unsigned long long));
 	else if (c == 'd' || c == 'i')
-	{
-		count = checkdi(args);
-	}
+		count += checkdi(va_arg(args, int));
 	else if (c == 'u')
-	{
-		count = checku(args);
-	}
+		count += checku(va_arg(args, unsigned int));
 	else if (c == 'x' || c == 'X')
-	{
-		count = checkx(c, args);
-	}
+		count += checkx(c, va_arg(args, unsigned int));
 	else if (c == '%')
 	{
 		write(1, "%", 1);
@@ -52,8 +40,8 @@ int	checkchar(char c, va_list args)
 int	ft_printf(const char *format, ...)
 {
 	va_list	args;
-	int	count;
-	int	i;
+	int		count;
+	int		i;
 
 	va_start(args, format);
 	count = 0;
@@ -62,15 +50,14 @@ int	ft_printf(const char *format, ...)
 	{
 		if (format[i] == '%')
 		{
+			count = count + checkchar(format[i + 1], args);
 			i++;
-			count = count + checkchar(format[i], args);
-			i = i + (count - 2);
 		}
 		else
 		{
+			count++;
 			write(1, &format[i], 1);
 		}
-		count++;
 		i++;
 	}
 	va_end(args);
